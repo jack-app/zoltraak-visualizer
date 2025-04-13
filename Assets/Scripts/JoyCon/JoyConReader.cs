@@ -3,13 +3,15 @@ using System.IO;
 using System.IO.MemoryMappedFiles;
 using UnityEngine;
 
-public class JoyConDirectionReader : MonoBehaviour
+public class JoyConReader : MonoBehaviour
 {
-    public static JoyConDirectionReader Instance { get; private set; }
+    public static JoyConReader Instance { get; private set; }
 
-    public float DirectionX { get; private set; }
-    public float DirectionY { get; private set; }
-    public float DirectionZ { get; private set; }
+    public float RotationX { get; private set; }
+    public float RotationY { get; private set; }
+    public float RotationZ { get; private set; }
+
+
 
     public float PointerX { get; private set; }
     public float PointerY { get; private set; }
@@ -59,7 +61,7 @@ public class JoyConDirectionReader : MonoBehaviour
         }
     }
 
-    void Update()
+       void Update()
     {
         if (accessor == null) return;
 
