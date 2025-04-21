@@ -6,6 +6,7 @@ public class EffectSampler : MonoBehaviour
     [SerializeField] private GameObject effectParent;
     private Transform effectTransform;
     private int counter = 0;
+    private const float animationTime = 7.25f;
 
     void Start()
     {
@@ -18,7 +19,7 @@ public class EffectSampler : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && !effectParent.activeSelf)
         {
             Transform destination = effectTransform;
-            //‚Æ‚è‚ ‚¦‚¸è“®‚Åransform‚ğ—^‚¦‚é
+            //ã¨ã‚Šã‚ãˆãšæ‰‹å‹•ã§ransformã‚’ä¸ãˆã‚‹
             switch (counter)
             {
                 case 0:
@@ -44,12 +45,12 @@ public class EffectSampler : MonoBehaviour
         }
     }
 
-    //Transform‚ğó‚¯æ‚Á‚Ä‚»‚ÌˆÊ’uA•ûŒü‚ÉƒGƒtƒFƒNƒg‚ğ”­¶‚³‚¹‚é
+    //Transformã‚’å—ã‘å–ã£ã¦ãã®ä½ç½®ã€æ–¹å‘ã«ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’ç™ºç”Ÿã•ã›ã‚‹
     public IEnumerator EffectGenerater(Transform destination)
     {
         effectTransform = destination;
         effectParent.SetActive(true);
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(animationTime);
         effectParent.SetActive(false);
     }
 }
