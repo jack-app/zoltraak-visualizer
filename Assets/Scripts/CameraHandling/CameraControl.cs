@@ -20,6 +20,19 @@ public class CameraControl : MonoBehaviour
             dropDown.options.Add(new Dropdown.OptionData { text = name });
             Debug.Log(this.webCamDevices[i].name);
         }
+
+        if (this.webCamDevices.Length > 0){
+            webCamTexture = new WebCamTexture(webCamDevices[0].name, 1280, 720, 30);
+            rawImage.texture = webCamTexture;
+
+            // apply video aspect to rawImage
+            float rate = (float)rawImage.texture.width / rawImage.texture.height;
+            float imageHeight = rawImage.rectTransform.sizeDelta.y;
+            rawImage.rectTransform.sizeDelta = new Vector2(imageHeight * rate, imageHeight);
+
+            webCamTexture.Play();
+            dropDown.value = 0;
+        }
     }
 
     public void onDeviceChanged () {
