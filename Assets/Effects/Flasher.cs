@@ -6,9 +6,9 @@ public class Flasher : MonoBehaviour
 {
     [SerializeField] private PostProcessVolume postProcessVolume;
     private Bloom bloom;
-    private const int defaultIntensity = 6;
+    private const int defaultIntensity = 10;
     private const int maxIntensity = 20;
-    private const float defaultThreshold = 0.5f;
+    private const float defaultThreshold = 0.9f;
     private const float minThreshold = 0.3f;
 
     void Start()
