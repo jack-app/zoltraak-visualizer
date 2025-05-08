@@ -10,16 +10,10 @@ public class JoyConReader : MonoBehaviour
     public float RotationX { get; private set; }
     public float RotationY { get; private set; }
     public float RotationZ { get; private set; }
+    public float RotationW { get; private set; }
 
 
-
-    public float PointerX { get; private set; }
-    public float PointerY { get; private set; }
-    public float RotationX { get; private set; }
-    public float RotationY { get; private set; }
-    public float RotationZ { get; private set; }
-
-    private const int dataSize = 12; // float x3
+    private const int dataSize = 16; // float * 4 = 16 bytes
     private MemoryMappedFile mmf;
     private MemoryMappedViewAccessor accessor;
     private string absolutePath;
@@ -61,20 +55,16 @@ public class JoyConReader : MonoBehaviour
         }
     }
 
-       void Update()
+    void Update()
     {
         if (accessor == null) return;
 
         try
         {
-            DirectionX = accessor.ReadSingle(0);
-            DirectionY = accessor.ReadSingle(4);
-            DirectionZ = -1.0f * accessor.ReadSingle(8);
-            PointerX = accessor.ReadSingle(12);
-            PointerY = accessor.ReadSingle(16);
-            RotationX = accessor.ReadSingle(20);
-            RotationY = accessor.ReadSingle(24);
-            RotationZ = accessor.ReadSingle(28);
+            RotationX = accessor.ReadSingle(0);
+            RotationY = accessor.ReadSingle(4);
+            RotationZ = accessor.ReadSingle(8);
+            RotationW = accessor.ReadSingle(12);
         }
         catch (Exception e)
         {
