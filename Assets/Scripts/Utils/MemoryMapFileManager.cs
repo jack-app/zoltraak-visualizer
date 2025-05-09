@@ -18,7 +18,7 @@ public class MemoryMapFileManager : MonoBehaviour
 
     private Quaternion GetRotation()
     {
-        //À‘•‚ªŠ®—¹‚µ‚½‚ç‘‚«Š·‚¦‚Ä‚­‚¾‚³‚¢
+        //å®Ÿè£…ãŒå®Œäº†ã—ãŸã‚‰æ›¸ãæ›ãˆã¦ãã ã•ã„
         return Quaternion.identity;
     }
     private Vector3 GetPosition()
