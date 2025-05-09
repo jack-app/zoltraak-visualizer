@@ -10,7 +10,7 @@ public class SpellEffectManager : MonoBehaviour
     void Start()
     {
         spellDict.Add(SPELL.Zoltraak, "Zoltraak");
-
+        spellDict.Add(SPELL.Railzaiden, "Railzaiden");
     }
 
     // Update is called once per frame

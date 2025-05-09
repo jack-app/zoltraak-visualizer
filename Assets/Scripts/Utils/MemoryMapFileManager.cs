@@ -19,6 +19,11 @@ public class MemoryMapFileManager : MonoBehaviour
         {
             spellEffectManager.OnSpelled(SPELL.Zoltraak, GetPosition(), GetRotation());
         }
+        //レイルザイデンで実験する用
+        if (Input.GetMouseButtonDown(1))
+        {
+            spellEffectManager.OnSpelled(SPELL.Railzaiden, GetPosition(), GetRotation());
+        }
     }
 
     private Quaternion GetRotation()
