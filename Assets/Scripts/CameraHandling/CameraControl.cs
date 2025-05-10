@@ -22,13 +22,8 @@ public class CameraControl : MonoBehaviour
         }
 
         if (this.webCamDevices.Length > 0){
-            webCamTexture = new WebCamTexture(webCamDevices[0].name, 1280, 720, 30);
+            webCamTexture = new WebCamTexture(webCamDevices[0].name, 1920, 1080, 30);
             rawImage.texture = webCamTexture;
-
-            // apply video aspect to rawImage
-            float rate = (float)rawImage.texture.width / rawImage.texture.height;
-            float imageHeight = rawImage.rectTransform.sizeDelta.y;
-            rawImage.rectTransform.sizeDelta = new Vector2(imageHeight * rate, imageHeight);
 
             webCamTexture.Play();
             dropDown.value = 0;
@@ -39,14 +34,13 @@ public class CameraControl : MonoBehaviour
         if (webCamTexture != null){
             webCamTexture.Stop();
         }
-        webCamTexture = new WebCamTexture(webCamDevices[dropDown.value].name, 1280, 720, 30);
+        webCamTexture = new WebCamTexture(webCamDevices[dropDown.value].name, 1920, 1080, 30);
         rawImage.texture = webCamTexture;
 
-        // apply video aspect to rawImage
-        float rate = (float)rawImage.texture.width / rawImage.texture.height;
-        float imageHeight = rawImage.rectTransform.sizeDelta.y;
-        rawImage.rectTransform.sizeDelta = new Vector2(imageHeight * rate, imageHeight);
-
         webCamTexture.Play();
+    }
+    public WebCamTexture GetWebCamTexture()
+    {
+        return webCamTexture;
     }
 }
