@@ -2,11 +2,10 @@ using UnityEngine;
 
 public class JoyConControlledObject : MonoBehaviour
 {
-    // 回転の平滑化係数（動きが激しいときに調整）
     [Range(0f, 1f)]
     public float smoothing = 0.2f;
 
-    private Quaternion currentRotation;
+    private Quaternion currentRotation = new Quaternion(0, 0, 0, 1);
 
     void Start()
     {
@@ -15,20 +14,18 @@ public class JoyConControlledObject : MonoBehaviour
 
     void Update()
     {
-        var reader = JoyConDirectionReader.Instance;
+        var reader = JoyConReader.Instance;
         if (reader == null) return;
 
-        Vector3 direction = new Vector3(reader.DirectionX, reader.DirectionY, reader.DirectionZ);
+        // ラジアン → 度に変換
+        float xDeg = Mathf.Rad2Deg * -reader.RotationX;
+        float yDeg = Mathf.Rad2Deg * -reader.RotationZ;
+        float zDeg = Mathf.Rad2Deg * reader.RotationY;
+        float wDeg = Mathf.Rad2Deg * reader.RotationW;
 
+        Quaternion targetRotation = new Quaternion(xDeg, yDeg, zDeg, wDeg);
+        currentRotation = Quaternion.Slerp(currentRotation, targetRotation, smoothing);
 
-        if (direction.magnitude < 0.001f) return; // 無効な方向をスキップ
-
-        transform.forward = direction;
-        // // 単位ベクトル化して回転へ変換
-        // Quaternion targetRotation = Quaternion.LookRotation(direction.normalized);
-
-        // // スムーズに回転（滑らかさ調整）
-        // currentRotation = Quaternion.Slerp(currentRotation, targetRotation, smoothing);
-        // transform.rotation = currentRotation;
+        transform.rotation = currentRotation;
     }
 }
