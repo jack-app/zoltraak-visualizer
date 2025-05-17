@@ -15,14 +15,19 @@ public class MemoryMapFileManager : MonoBehaviour
     void Update()
     {
         //ゾルトラークで実験する用
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            spellEffectManager.OnSpelled(SPELL.Zoltraak, GetPosition(), GetRotation());
+            StartCoroutine(spellEffectManager.OnSpelled(SPELL.Zoltraak, GetPosition(), Quaternion.Euler(0, -45, 0)));
         }
         //レイルザイデンで実験する用
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            spellEffectManager.OnSpelled(SPELL.Railzaiden, GetPosition(), GetRotation());
+            StartCoroutine(spellEffectManager.OnSpelled(SPELL.Railzaiden, GetPosition(), GetRotation()));
+        }
+        //カタストラーヴィアで実験する用
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            StartCoroutine(spellEffectManager.OnSpelled(SPELL.Catastlavia, GetPosition(), Quaternion.Euler(0, -45, 0)));
         }
     }
 

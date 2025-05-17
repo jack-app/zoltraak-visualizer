@@ -15,5 +15,5 @@ public abstract class SpellEffectBase : MonoBehaviour
     {
         
     }
-    public abstract void Activate(Vector3 position, Quaternion quaternion);
+    public abstract IEnumerator Activate(Vector3 position, Quaternion quaternion);
 }

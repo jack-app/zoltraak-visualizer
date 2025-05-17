@@ -6,22 +6,29 @@ public class SpellEffectManager : MonoBehaviour
 {
     private const string spellPrefabPath = "Prefabs/Spells/";
     private Dictionary<SPELL, string> spellDict = new();
+    private bool isSomeSpellActive = false;
     // Start is called before the first frame update
     void Start()
     {
         spellDict.Add(SPELL.Zoltraak, "Zoltraak");
         spellDict.Add(SPELL.Railzaiden, "Railzaiden");
+        spellDict.Add(SPELL.Catastlavia, "Catastlavia");
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
-    
-    public void OnSpelled(SPELL spell, Vector3 position, Quaternion quaternion)
+
+    public IEnumerator OnSpelled(SPELL spell, Vector3 position, Quaternion quaternion)
     {
-        GameObject spellObject = Instantiate(Resources.Load<GameObject>(spellPrefabPath + spellDict[spell]), position, quaternion);
-        spellObject.GetComponent<SpellEffectBase>().Activate(position, quaternion);
+        if (!isSomeSpellActive)
+        {
+            GameObject spellObject = Instantiate(Resources.Load<GameObject>(spellPrefabPath + spellDict[spell]), position, quaternion);
+            isSomeSpellActive = true;
+            yield return StartCoroutine(spellObject.GetComponent<SpellEffectBase>().Activate(position, quaternion));
+            isSomeSpellActive = false;
+        }
     }
 }
