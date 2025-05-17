@@ -3,15 +3,17 @@ using System.IO;
 using System.IO.MemoryMappedFiles;
 using UnityEngine;
 
-public class JoyConDirectionReader : MonoBehaviour
+public class JoyConReader : MonoBehaviour
 {
-    public static JoyConDirectionReader Instance { get; private set; }
+    public static JoyConReader Instance { get; private set; }
 
-    public float DirectionX { get; private set; }
-    public float DirectionY { get; private set; }
-    public float DirectionZ { get; private set; }
+    public float RotationX { get; private set; }
+    public float RotationY { get; private set; }
+    public float RotationZ { get; private set; }
+    public float RotationW { get; private set; }
 
-    private const int dataSize = 12; // float x3
+
+    private const int dataSize = 16; // float * 4 = 16 bytes
     private MemoryMappedFile mmf;
     private MemoryMappedViewAccessor accessor;
     private string absolutePath;
@@ -59,9 +61,10 @@ public class JoyConDirectionReader : MonoBehaviour
 
         try
         {
-            DirectionX = accessor.ReadSingle(0);
-            DirectionY = accessor.ReadSingle(4);
-            DirectionZ = -1.0f * accessor.ReadSingle(8);
+            RotationX = accessor.ReadSingle(0);
+            RotationY = accessor.ReadSingle(4);
+            RotationZ = accessor.ReadSingle(8);
+            RotationW = accessor.ReadSingle(12);
         }
         catch (Exception e)
         {
