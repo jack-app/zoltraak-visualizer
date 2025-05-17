@@ -5,18 +5,14 @@ using UnityEngine;
 public class Zoltraak : SpellEffectBase
 {
     private Transform effectTransform;
-    private const float animationTime = 7.25f;
+    private const float animationTime = 7.2f;
 
     void Start()
     {
         effectTransform = GetComponent<Transform>();
     }
 
-    public override void Activate(Vector3 position, Quaternion quaternion)
-    {
-        StartCoroutine(EffectGenerater(position, quaternion));
-    }
-    private IEnumerator EffectGenerater(Vector3 position, Quaternion quaternion)
+    public override IEnumerator Activate(Vector3 position, Quaternion quaternion)
     {
         yield return null;
         effectTransform.position = position;

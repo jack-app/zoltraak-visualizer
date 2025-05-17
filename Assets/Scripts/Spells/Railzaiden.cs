@@ -10,7 +10,7 @@ public class Railzaiden : SpellEffectBase
     [SerializeField] private RectTransform image1Rect;
     [SerializeField] private RectTransform image2Rect;
     private Animator animator;
-    private const float animationTime = 3.5f;
+    private const float animationTime = 3.49f;
 
     void Start()
     {
@@ -19,12 +19,7 @@ public class Railzaiden : SpellEffectBase
         animator = displays.GetComponent<Animator>();
     }
 
-    public override void Activate(Vector3 position, Quaternion quaternion)
-    {
-        StartCoroutine(Anim());
-    }
-
-    private IEnumerator Anim()
+    public override IEnumerator Activate(Vector3 position, Quaternion quaternion)
     {
         yield return null;
         transform.SetParent(GameObject.Find("Canvas").transform, false);
