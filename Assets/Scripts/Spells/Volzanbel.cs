@@ -78,6 +78,7 @@ public class Volzanbel : SpellEffectBase
         yield return new WaitForSeconds(3);
         beam.SetActive(false);
         globalParticle.SetActive(false);
+        Destroy(gameObject);
     }
     private IEnumerator Flash1()
     {

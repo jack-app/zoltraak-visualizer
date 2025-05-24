@@ -34,6 +34,11 @@ public class MemoryMapFileManager : MonoBehaviour
         {
             StartCoroutine(spellEffectManager.OnSpelled(SPELL.Volzanbel, GetPosition(), Quaternion.Euler(0, -45, 0)));
         }
+        //ジュドラジルムデバッグ用
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            StartCoroutine(spellEffectManager.OnSpelled(SPELL.Judolazirum, GetPosition(), Quaternion.Euler(0, -45, 0)));
+        }
     }
 
     private Quaternion GetRotation()
