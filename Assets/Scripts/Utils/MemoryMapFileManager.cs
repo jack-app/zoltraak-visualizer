@@ -14,20 +14,30 @@ public class MemoryMapFileManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //ゾルトラークで実験する用
+        //ゾルトラークデバッグ用
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             StartCoroutine(spellEffectManager.OnSpelled(SPELL.Zoltraak, GetPosition(), Quaternion.Euler(0, -45, 0)));
         }
-        //レイルザイデンで実験する用
+        //レイルザイデンデバッグ用
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             StartCoroutine(spellEffectManager.OnSpelled(SPELL.Railzaiden, GetPosition(), GetRotation()));
         }
-        //カタストラーヴィアで実験する用
+        //カタストラーヴィアデバッグ用
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             StartCoroutine(spellEffectManager.OnSpelled(SPELL.Catastlavia, GetPosition(), Quaternion.Euler(0, -45, 0)));
+        }
+        //ヴォルザンベルデバッグ用
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            StartCoroutine(spellEffectManager.OnSpelled(SPELL.Volzanbel, GetPosition(), Quaternion.Euler(0, -45, 0)));
+        }
+        //ジュドラジルムデバッグ用
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            StartCoroutine(spellEffectManager.OnSpelled(SPELL.Judolazirum, GetPosition(), Quaternion.Euler(0, -45, 0)));
         }
     }
 

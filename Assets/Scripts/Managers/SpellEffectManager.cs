@@ -13,6 +13,8 @@ public class SpellEffectManager : MonoBehaviour
         spellDict.Add(SPELL.Zoltraak, "Zoltraak");
         spellDict.Add(SPELL.Railzaiden, "Railzaiden");
         spellDict.Add(SPELL.Catastlavia, "Catastlavia");
+        spellDict.Add(SPELL.Volzanbel, "Volzanbel");
+        spellDict.Add(SPELL.Judolazirum, "Judolazirum");
     }
 
     // Update is called once per frame
