@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+
 
 public class JoyConControlledObject : MonoBehaviour
 {
@@ -14,8 +16,12 @@ public class JoyConControlledObject : MonoBehaviour
 
     void Update()
     {
-        var reader = JoyConReader.Instance;
-        if (reader == null) return;
+        var reader = MemoryMapFileManager.Instance;
+        if (reader == null)
+        {
+            Debug.LogWarning("MemoryMapFileManagerが見つかりません。MemoryMapFileManagerコンポーネントがシーンに配置されているか確認してください。");
+            return;
+        }
 
         // ラジアン → 度に変換
         float xDeg = Mathf.Rad2Deg * -reader.RotationX;
