@@ -17,11 +17,20 @@ public class MemoryMapFileManager : MonoBehaviour
     public float RotationY { get; private set; }
     public float RotationZ { get; private set; }
     public float RotationW { get; private set; }
+    public double px { get; private set; }
+    public double py { get; private set; }
 
     private const int dataSize = 16; // float * 4 = 16 bytes
     private MemoryMappedFile mmf;
     private MemoryMappedViewAccessor accessor;
     private string joyconAbsolutePath;
+    private float imageWidth = 1920f;
+    private float imageHeight = 1080f;
+    private float pixelToUnit = 0.01f;
+    private string positionMmapPath = "C:/Users/{ユーザー名}/mmap.txt";
+    private MemoryMappedFile positionMmf;
+    private MemoryMappedViewAccessor positionAccessor;
+    private Vector3 currentPosition = Vector3.zero;
 
 
     void Awake()
@@ -59,10 +68,26 @@ public class MemoryMapFileManager : MonoBehaviour
         {
             Debug.LogError("共有メモリファイルの読み込みに失敗: " + e.Message);
         }
+
+        if (!File.Exists(positionMmapPath))
+        {
+            Debug.LogError("共有ファイルが見つかりません: " + positionMmapPath);
+            return;
+        }
+
+        try
+        {
+            positionMmf = MemoryMappedFile.CreateFromFile(positionMmapPath, FileMode.Open, null);
+            positionAccessor = positionMmf.CreateViewAccessor(0, dataSize, MemoryMappedFileAccess.Read);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("共有メモリファイルの読み込みに失敗: " + e.Message);
+        }
     }
     void Start()
     {
-
+        StartCoroutine(PollPositionCoroutine());
     }
 
     // Update is called once per frame
@@ -79,6 +104,7 @@ public class MemoryMapFileManager : MonoBehaviour
             spellEffectManager.OnSpelled(SPELL.Railzaiden, GetPosition(), GetRotation());
         }
     }
+
 
     private Quaternion GetRotation()
     {
@@ -105,9 +131,72 @@ public class MemoryMapFileManager : MonoBehaviour
         Quaternion targetRotation = new Quaternion(xDeg, yDeg, zDeg, wDeg);
         return targetRotation;
     }
+    private IEnumerator PollPositionCoroutine()
+    {
+        while (true)
+        {
+            Vector3 pos = GetPosition();
+            // 5秒ごとに実行
+            yield return new WaitForSeconds(5f);
+        }
+    }
     private Vector3 GetPosition()
     {
-        // 位置は固定値で返す
-        return new Vector3(0, 0, 0);
+        if (positionAccessor == null)
+        {
+            currentPosition = Vector3.zero;
+            return currentPosition;
+        }
+
+        try
+        {
+            px = positionAccessor.ReadDouble(0);
+            py = positionAccessor.ReadDouble(8);
+
+            // unityの座標系に合わせる
+            float uX = (float)((px - (imageWidth / 2.0)) * pixelToUnit);
+            float uY = (float)(((imageHeight / 2.0) - py) * pixelToUnit);
+            float uZ = 0f;
+
+            currentPosition = new Vector3(uX, uY, uZ);
+            Debug.Log("座標系: " + currentPosition);
+            return currentPosition;
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning("共有メモリからの位置情報読み取り失敗: " + e.Message);
+            currentPosition = Vector3.zero;
+            return currentPosition;
+        }
+    }
+
+    void OnDisable()
+    {
+        // 既存の OnDestroy と同じく、アクセサを必ず解放
+        if (accessor != null)
+        {
+            accessor.Dispose();
+            accessor = null;
+        }
+        if (positionAccessor != null)
+        {
+            positionAccessor.Dispose();
+            positionAccessor = null;
+        }
+    }
+
+    void OnDestroy()
+    {
+        // 既存の OnDestroy と同じく、アクセサを必ず解放
+        if (accessor != null)
+        {
+            accessor.Dispose();
+            accessor = null;
+        }
+        if (positionAccessor != null)
+        {
+            positionAccessor.Dispose();
+            positionAccessor = null;
+        }
     }
 }
