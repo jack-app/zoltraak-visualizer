@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 592858246}
   - component: {fileID: 592858245}
   m_Layer: 0
-  m_Name: JoyConReader
+  m_Name: MemoryMapFileManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
