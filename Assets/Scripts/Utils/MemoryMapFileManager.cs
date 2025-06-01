@@ -20,14 +20,14 @@ public class MemoryMapFileManager : MonoBehaviour
     public double px { get; private set; }
     public double py { get; private set; }
 
-    private const int dataSize = 16; // float * 4 = 16 bytes
+    private const long dataSize = sizeof(double) * 6;
     private MemoryMappedFile mmf;
     private MemoryMappedViewAccessor accessor;
     private string joyconAbsolutePath;
     private float imageWidth = 1920f;
     private float imageHeight = 1080f;
     private float pixelToUnit = 0.01f;
-    private string positionMmapPath = "C:/Users/{ユーザー名}/mmap.txt";
+    private string positionMmapPath = "C:/Users/{ユーザー名}/mmap.txt"; // パスは適宜変更する。
     private MemoryMappedFile positionMmf;
     private MemoryMappedViewAccessor positionAccessor;
     private Vector3 currentPosition = Vector3.zero;
@@ -71,7 +71,7 @@ public class MemoryMapFileManager : MonoBehaviour
 
         if (!File.Exists(positionMmapPath))
         {
-            Debug.LogError("共有ファイルが見つかりません: " + positionMmapPath);
+            Debug.LogError("共有メモリファイルが見つかりません: " + positionMmapPath);
             return;
         }
 
@@ -144,31 +144,71 @@ public class MemoryMapFileManager : MonoBehaviour
     {
         if (positionAccessor == null)
         {
-            currentPosition = Vector3.zero;
+            return currentPosition;
+        }
+
+        // もしクリックされ呼ばれた場合は、そのクリック場所をcurrentPositionとして保存する
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3 mousePos = Input.mousePosition;
+            float zDistance = Mathf.Abs(Camera.main.transform.position.z);
+            Vector3 worldPoint = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, zDistance));
+            currentPosition = new Vector3(worldPoint.x, worldPoint.y, 0f);
+            Debug.Log("クリック位置を currentPosition に設定: " + currentPosition);
             return currentPosition;
         }
 
         try
         {
-            px = positionAccessor.ReadDouble(0);
-            py = positionAccessor.ReadDouble(8);
+            double[] imageCoords = new double[6];
+            for (int i = 0; i < 6; i++)
+            {
+                imageCoords[i] = positionAccessor.ReadDouble(i * sizeof(double));
+            }
 
-            // unityの座標系に合わせる
-            float uX = (float)((px - (imageWidth / 2.0)) * pixelToUnit);
-            float uY = (float)(((imageHeight / 2.0) - py) * pixelToUnit);
-            float uZ = 0f;
+            // currentPosition はすでに Unity 座標系で保持されている
+            Vector3 bestCandidate = currentPosition;
+            double bestDist = double.MaxValue;
+            // Python 座標系 (ピクセル単位) を Unity 座標系に変換する関数
+            System.Func<double, double, Vector3> toUnity = (px, py) =>
+            {
+                float uX = (float)((px - (imageWidth / 2.0)) * pixelToUnit);
+                float uY = (float)(((imageHeight / 2.0) - py) * pixelToUnit);
+                return new Vector3(uX, uY, 0f);
+            };
 
-            currentPosition = new Vector3(uX, uY, uZ);
+            for (int idx = 0; idx < 3; idx++)
+            {
+                double ix = imageCoords[2 * idx];
+                double iy = imageCoords[2 * idx + 1];
+
+                // (0,0) は候補点ではなく、mmapのメモリが決まっている関係上、枠が足りなかった場合に補填する為の値なため、(0,0)は除外して考える
+                if (ix == 0.0 && iy == 0.0)
+                    continue;
+
+                Vector3 candidateUnity = toUnity(ix, iy);
+                double d = Vector3.SqrMagnitude(candidateUnity - currentPosition);
+                if (d < bestDist)
+                {
+                    bestDist = d;
+                    bestCandidate = candidateUnity;
+                }
+            }
+            if (bestDist < double.MaxValue)
+            {
+                currentPosition = bestCandidate;
+            }
+
             Debug.Log("座標系: " + currentPosition);
             return currentPosition;
         }
         catch (Exception e)
         {
             Debug.LogWarning("共有メモリからの位置情報読み取り失敗: " + e.Message);
-            currentPosition = Vector3.zero;
             return currentPosition;
         }
     }
+
 
     void OnDisable()
     {
