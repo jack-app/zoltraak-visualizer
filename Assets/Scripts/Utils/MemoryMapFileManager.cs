@@ -27,7 +27,7 @@ public class MemoryMapFileManager : MonoBehaviour
     private float imageWidth = 1920f;
     private float imageHeight = 1080f;
     private float pixelToUnit = 0.01f;
-    private string positionMmapPath = "C:/Users/{ユーザー名}/mmap.txt"; // パスは適宜変更する。
+    public string positionMmapPath = "C:/Users/{ユーザー名}/mmap.txt"; // パスは適宜変更する。
     private MemoryMappedFile positionMmf;
     private MemoryMappedViewAccessor positionAccessor;
     private Vector3 currentPosition = Vector3.zero;

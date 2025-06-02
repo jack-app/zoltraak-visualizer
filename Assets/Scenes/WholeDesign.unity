@@ -994,6 +994,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spellEffectManager: {fileID: 1358512954}
   isDebug: 0
+  positionMmapPath: /tmp/pos_mmap.txt
 --- !u!4 &972746921
 Transform:
   m_ObjectHideFlags: 0
@@ -1191,7 +1192,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c4dc693060436941a9d8f134dcf9179, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mmapPath: C:/Users/inher/color.txt
+  mmapPath: /tmp/color_mmap.txt
 --- !u!4 &1174947676
 Transform:
   m_ObjectHideFlags: 0
