@@ -17,11 +17,20 @@ public class MemoryMapFileManager : MonoBehaviour
     public float RotationY { get; private set; }
     public float RotationZ { get; private set; }
     public float RotationW { get; private set; }
+    public double px { get; private set; }
+    public double py { get; private set; }
 
-    private const int dataSize = 16; // float * 4 = 16 bytes
+    private const long dataSize = sizeof(double) * 6;
     private MemoryMappedFile mmf;
     private MemoryMappedViewAccessor accessor;
     private string joyconAbsolutePath;
+    private float imageWidth = 1920f;
+    private float imageHeight = 1080f;
+    private float pixelToUnit = 0.01f;
+    public string positionMmapPath = "C:/Users/{ユーザー名}/mmap.txt"; // パスは適宜変更する。
+    private MemoryMappedFile positionMmf;
+    private MemoryMappedViewAccessor positionAccessor;
+    private Vector3 currentPosition = Vector3.zero;
 
 
     void Awake()
@@ -59,10 +68,26 @@ public class MemoryMapFileManager : MonoBehaviour
         {
             Debug.LogError("共有メモリファイルの読み込みに失敗: " + e.Message);
         }
+
+        if (!File.Exists(positionMmapPath))
+        {
+            Debug.LogError("共有メモリファイルが見つかりません: " + positionMmapPath);
+            return;
+        }
+
+        try
+        {
+            positionMmf = MemoryMappedFile.CreateFromFile(positionMmapPath, FileMode.Open, null);
+            positionAccessor = positionMmf.CreateViewAccessor(0, dataSize, MemoryMappedFileAccess.Read);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("共有メモリファイルの読み込みに失敗: " + e.Message);
+        }
     }
     void Start()
     {
-
+        StartCoroutine(PollPositionCoroutine());
     }
 
     // Update is called once per frame
@@ -95,6 +120,7 @@ public class MemoryMapFileManager : MonoBehaviour
         }
     }
 
+
     private Quaternion GetRotation()
     {
         if (isDebug) return Quaternion.identity;
@@ -120,9 +146,112 @@ public class MemoryMapFileManager : MonoBehaviour
         Quaternion targetRotation = new Quaternion(xDeg, yDeg, zDeg, wDeg);
         return targetRotation;
     }
+    private IEnumerator PollPositionCoroutine()
+    {
+        while (true)
+        {
+            Vector3 pos = GetPosition();
+            // 5秒ごとに実行
+            yield return new WaitForSeconds(5f);
+        }
+    }
     private Vector3 GetPosition()
     {
-        // 位置は固定値で返す
-        return new Vector3(0, 0, 0);
+        if (positionAccessor == null)
+        {
+            return currentPosition;
+        }
+
+        // もしクリックされ呼ばれた場合は、そのクリック場所をcurrentPositionとして保存する
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3 mousePos = Input.mousePosition;
+            float zDistance = Mathf.Abs(Camera.main.transform.position.z);
+            Vector3 worldPoint = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, zDistance));
+            currentPosition = new Vector3(worldPoint.x, worldPoint.y, 0f);
+            Debug.Log("クリック位置を currentPosition に設定: " + currentPosition);
+            return currentPosition;
+        }
+
+        try
+        {
+            double[] imageCoords = new double[6];
+            for (int i = 0; i < 6; i++)
+            {
+                imageCoords[i] = positionAccessor.ReadDouble(i * sizeof(double));
+            }
+
+            // currentPosition はすでに Unity 座標系で保持されている
+            Vector3 bestCandidate = currentPosition;
+            double bestDist = double.MaxValue;
+            // Python 座標系 (ピクセル単位) を Unity 座標系に変換する関数
+            System.Func<double, double, Vector3> toUnity = (px, py) =>
+            {
+                float uX = (float)((px - (imageWidth / 2.0)) * pixelToUnit);
+                float uY = (float)(((imageHeight / 2.0) - py) * pixelToUnit);
+                return new Vector3(uX, uY, 0f);
+            };
+
+            for (int idx = 0; idx < 3; idx++)
+            {
+                double ix = imageCoords[2 * idx];
+                double iy = imageCoords[2 * idx + 1];
+
+                // (0,0) は候補点ではなく、mmapのメモリが決まっている関係上、枠が足りなかった場合に補填する為の値なため、(0,0)は除外して考える
+                if (ix == 0.0 && iy == 0.0)
+                    continue;
+
+                Vector3 candidateUnity = toUnity(ix, iy);
+                double d = Vector3.SqrMagnitude(candidateUnity - currentPosition);
+                if (d < bestDist)
+                {
+                    bestDist = d;
+                    bestCandidate = candidateUnity;
+                }
+            }
+            if (bestDist < double.MaxValue)
+            {
+                currentPosition = bestCandidate;
+            }
+
+            Debug.Log("座標系: " + currentPosition);
+            return currentPosition;
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning("共有メモリからの位置情報読み取り失敗: " + e.Message);
+            return currentPosition;
+        }
+    }
+
+
+    void OnDisable()
+    {
+        // 既存の OnDestroy と同じく、アクセサを必ず解放
+        if (accessor != null)
+        {
+            accessor.Dispose();
+            accessor = null;
+        }
+        if (positionAccessor != null)
+        {
+            positionAccessor.Dispose();
+            positionAccessor = null;
+        }
+    }
+
+    void OnDestroy()
+    {
+        // 既存の OnDestroy と同じく、アクセサを必ず解放
+        if (accessor != null)
+        {
+            accessor.Dispose();
+            accessor = null;
+        }
+        if (positionAccessor != null)
+        {
+            positionAccessor.Dispose();
+            positionAccessor = null;
+        }
     }
 }
