@@ -7,6 +7,7 @@ using UnityEngine.Rendering.PostProcessing;
 public class Volzanbel : SpellEffectBase
 {
     private Transform myTransform;
+    [SerializeField] private Transform effectParent;
     [SerializeField] private PostProcessVolume postProcessVolume;
     private Bloom bloom;
     [SerializeField] private GameObject beam;
@@ -57,7 +58,7 @@ public class Volzanbel : SpellEffectBase
         yield return new WaitForSeconds(0.75f);
         //直前の発光
         StartCoroutine(Flash2());
-        GameObject flash = Instantiate(flashPrefab, myTransform);
+        GameObject flash = Instantiate(flashPrefab, effectParent);
         flash.transform.position = new(1, -1, 0);
         flash.transform.rotation = Quaternion.identity;
         flash.transform.localScale = new(2, 1, 1);
@@ -145,9 +146,9 @@ public class Volzanbel : SpellEffectBase
             }
         }
         yield return new WaitForSeconds(0.25f);
-        GenerateFireGlobal(new(1, 0, -1));
+        GenerateFireGlobal(new(0, 0, -1));
         yield return new WaitForSeconds(0.75f);
-        GenerateFlashGlobal(new(1, -1.5f, -1));
+        GenerateFlashGlobal(new(0, -1.5f, -1));
     }
     //private IEnumerator RandomFire()
     //{
@@ -168,7 +169,7 @@ public class Volzanbel : SpellEffectBase
     //}
     private void GenerateFire(Vector3 pos)
     {
-        GameObject fire = Instantiate(firePrefab, myTransform);
+        GameObject fire = Instantiate(firePrefab, effectParent);
         fire.transform.localPosition = pos;
         fire.transform.rotation = Quaternion.Euler(-90, 0, 0);
         StartCoroutine(ManagePrefab(fire, 1));

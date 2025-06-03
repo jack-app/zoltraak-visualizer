@@ -148,7 +148,7 @@ public class MemoryMapFileManager : MonoBehaviour
         //レイルザイデンデバッグ用
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            StartCoroutine(spellEffectManager.OnSpelled(SPELL.Railzaiden, GetPosition(), GetRotation()));
+            StartCoroutine(spellEffectManager.OnSpelled(SPELL.Railzaiden, new (0, 0, 0), Quaternion.identity));
         }
         //カタストラーヴィアデバッグ用
         if (Input.GetKeyDown(KeyCode.Alpha3))
@@ -305,7 +305,7 @@ public class MemoryMapFileManager : MonoBehaviour
                     StartCoroutine(spellEffectManager.OnSpelled(SPELL.Zoltraak, GetPosition(), GetRotation()));
                     break;
                 case 2:
-                    StartCoroutine(spellEffectManager.OnSpelled(SPELL.Railzaiden, GetPosition(), GetRotation()));
+                    StartCoroutine(spellEffectManager.OnSpelled(SPELL.Railzaiden, new(0, 0, 0), Quaternion.identity));
                     break;
                 case 3:
                     StartCoroutine(spellEffectManager.OnSpelled(SPELL.Catastlavia, GetPosition(), GetRotation()));

@@ -12,6 +12,7 @@ public class Catastlavia : SpellEffectBase
     [SerializeField] private GameObject particle2;
     [SerializeField] private GameObject particle3;
     private Transform effectTransform;
+    [SerializeField] private Transform effectParent;
     private const int x = -1;
     private const float minY = -1;
     private const float maxY = 2;
@@ -49,7 +50,7 @@ public class Catastlavia : SpellEffectBase
         for (int i = 0; i < posNumber; i++)
         {
             float angleX = Mathf.Atan2(pos[i].y, -pos[i].z);
-            GameObject arrow = Instantiate(laviaPrefab, effectTransform);
+            GameObject arrow = Instantiate(laviaPrefab, effectParent);
             arrow.transform.localPosition = pos[i];
             arrow.transform.localRotation = Quaternion.Euler(new(angleX * Mathf.Rad2Deg, 0, 0));
             StartCoroutine(ArrowManage(arrow, 2.99f));
@@ -67,7 +68,7 @@ public class Catastlavia : SpellEffectBase
             float y = UnityEngine.Random.Range(minY, maxY);
             float z = UnityEngine.Random.Range(minZ, maxZ);
             float angleX = Mathf.Atan2(y, -z);
-            GameObject arrow = Instantiate(laviaPrefab2, effectTransform);
+            GameObject arrow = Instantiate(laviaPrefab2, effectParent);
             arrow.transform.localPosition = new(x, y, z);
             arrow.transform.localRotation = Quaternion.Euler(new(angleX * Mathf.Rad2Deg, 0, 0));
             StartCoroutine(ArrowManage(arrow, 0.49f));
@@ -76,7 +77,7 @@ public class Catastlavia : SpellEffectBase
                 float y2 = UnityEngine.Random.Range(minY, maxY);
                 float z2 = UnityEngine.Random.Range(minZ, maxZ);
                 float angleX2 = Mathf.Atan2(y2, -z2);
-                GameObject arrow2 = Instantiate(laviaPrefab2, effectTransform);
+                GameObject arrow2 = Instantiate(laviaPrefab2, effectParent);
                 arrow2.transform.localPosition = new(x, y2, z2);
                 arrow2.transform.localRotation = Quaternion.Euler(new(angleX2 * Mathf.Rad2Deg, 0, 0));
                 StartCoroutine(ArrowManage(arrow2, 0.49f));
