@@ -71,7 +71,7 @@ public class MemoryMapFileManager : MonoBehaviour
         try
         {
             mmf = MemoryMappedFile.CreateFromFile(joyconAbsolutePath, FileMode.Open, null);
-            accessor = mmf.CreateViewAccessor(0, (float)*4, MemoryMappedFileAccess.Read);
+            accessor = mmf.CreateViewAccessor(0, sizeof(float) * 4, MemoryMappedFileAccess.Read);
         }
         catch (Exception e)
         {
