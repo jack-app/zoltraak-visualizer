@@ -8,7 +8,6 @@ using System.IO.MemoryMappedFiles;
 
 public class MemoryMapFileManager : MonoBehaviour
 {
-    [SerializeField] private Transform visualizePos;
     [SerializeField] SpellEffectManager spellEffectManager;
     // Start is called before the first frame update
     public static MemoryMapFileManager Instance { get; private set; }
@@ -207,7 +206,6 @@ public class MemoryMapFileManager : MonoBehaviour
         while (true)
         {
             Vector3 pos = GetPosition();
-            visualizePos.position = pos;
             // 5秒ごとに実行
             yield return new WaitForSeconds(1f);
         }
