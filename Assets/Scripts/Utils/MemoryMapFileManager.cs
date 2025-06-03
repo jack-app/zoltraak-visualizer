@@ -8,6 +8,7 @@ using System.IO.MemoryMappedFiles;
 
 public class MemoryMapFileManager : MonoBehaviour
 {
+    [SerializeField] private Transform visualizePos;
     [SerializeField] SpellEffectManager spellEffectManager;
     // Start is called before the first frame update
     public static MemoryMapFileManager Instance { get; private set; }
@@ -27,14 +28,14 @@ public class MemoryMapFileManager : MonoBehaviour
     private float imageWidth = 1920f;
     private float imageHeight = 1080f;
     private float pixelToUnit = 0.01f;
-    public string positionMmapPath = "C:/Users/{ユーザー名}/mmap.txt"; // パスは適宜変更する。
+    public string positionMmapPath = "/tmp/pos_mmap.txt"; // パスは適宜変更する。
     private MemoryMappedFile positionMmf;
     private MemoryMappedViewAccessor positionAccessor;
     private Vector3 currentPosition = Vector3.zero;
 
     //呪文検出関係
-    public string spellDetectMmapPath = "C:/Users/{ユーザー名}/detect.txt";
-    public string spellsMmapPath = "C:/Users/{ユーザー名}/spells.txt";
+    public string spellDetectMmapPath = "/tmp/is_spell_detected";
+    public string spellsMmapPath = "/tmp/spell_id";
     private MemoryMappedFile detectMmf;
     private MemoryMappedViewAccessor detectAccessor;
     private MemoryMappedFile spellsMmf;
@@ -198,8 +199,9 @@ public class MemoryMapFileManager : MonoBehaviour
         while (true)
         {
             Vector3 pos = GetPosition();
+            visualizePos.position = pos;
             // 5秒ごとに実行
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(1f);
         }
     }
     private Vector3 GetPosition()

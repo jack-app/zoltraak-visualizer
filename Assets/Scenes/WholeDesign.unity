@@ -995,8 +995,8 @@ MonoBehaviour:
   spellEffectManager: {fileID: 1358512954}
   isDebug: 0
   positionMmapPath: /tmp/pos_mmap.txt
-  spellDetectMmapPath: "C:/Users/{\u30E6\u30FC\u30B6\u30FC\u540D}/is_spell_detected"
-  spellsMmapPath: "C:/Users/{\u30E6\u30FC\u30B6\u30FC\u540D}/spell_id"
+  spellDetectMmapPath: /tmp/is_spell_detected
+  spellsMmapPath: /tmp/spell_id
 --- !u!4 &972746921
 Transform:
   m_ObjectHideFlags: 0
@@ -1487,7 +1487,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1468500324
 BoxCollider:
   m_ObjectHideFlags: 0
