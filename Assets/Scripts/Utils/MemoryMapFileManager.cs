@@ -59,7 +59,7 @@ public class MemoryMapFileManager : MonoBehaviour
         joyconAbsolutePath = @"C:\Users\YourName\joycon_direction.dat"; // 必要に応じて書き換え
 #else
         Debug.LogError("Unsupported platform for JoyConDirectionReader");
-        return;
+        // return;
 #endif
 
         if (!File.Exists(joyconAbsolutePath))
@@ -71,7 +71,7 @@ public class MemoryMapFileManager : MonoBehaviour
         try
         {
             mmf = MemoryMappedFile.CreateFromFile(joyconAbsolutePath, FileMode.Open, null);
-            accessor = mmf.CreateViewAccessor(0, dataSize, MemoryMappedFileAccess.Read);
+            accessor = mmf.CreateViewAccessor(0, (float)*4, MemoryMappedFileAccess.Read);
         }
         catch (Exception e)
         {
@@ -166,7 +166,8 @@ public class MemoryMapFileManager : MonoBehaviour
         {
             StartCoroutine(spellEffectManager.OnSpelled(SPELL.Judolazirum, GetPosition(), GetRotation()));
         }
-        if (Input.GetMouseButtonDown(0)){
+        if (Input.GetMouseButtonDown(0))
+        {
             Vector3 mousePos = Input.mousePosition;
             float zDistance = Mathf.Abs(Camera.main.transform.position.z);
             Vector3 worldPoint = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, zDistance));
