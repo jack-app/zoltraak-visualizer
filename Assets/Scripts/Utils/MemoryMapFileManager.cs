@@ -33,8 +33,8 @@ public class MemoryMapFileManager : MonoBehaviour
     private Vector3 currentPosition = Vector3.zero;
 
     //呪文検出関係
-    public string spellDetectMmapPath = "\"C:/Users/{ユーザー名}/detect.txt\"";
-    public string spellsMmapPath = "\"C:/Users/{ユーザー名}/spells.txt\"";
+    public string spellDetectMmapPath = "C:/Users/{ユーザー名}/detect.txt";
+    public string spellsMmapPath = "C:/Users/{ユーザー名}/spells.txt";
     private MemoryMappedFile detectMmf;
     private MemoryMappedViewAccessor detectAccessor;
     private MemoryMappedFile spellsMmf;

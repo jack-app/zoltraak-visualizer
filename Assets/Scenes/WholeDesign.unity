@@ -995,6 +995,8 @@ MonoBehaviour:
   spellEffectManager: {fileID: 1358512954}
   isDebug: 0
   positionMmapPath: /tmp/pos_mmap.txt
+  spellDetectMmapPath: "C:/Users/{\u30E6\u30FC\u30B6\u30FC\u540D}/is_spell_detected"
+  spellsMmapPath: "C:/Users/{\u30E6\u30FC\u30B6\u30FC\u540D}/spell_id"
 --- !u!4 &972746921
 Transform:
   m_ObjectHideFlags: 0
