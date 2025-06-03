@@ -32,6 +32,14 @@ public class MemoryMapFileManager : MonoBehaviour
     private MemoryMappedViewAccessor positionAccessor;
     private Vector3 currentPosition = Vector3.zero;
 
+    //呪文検出関係
+    public string spellDetectMmapPath = "C:/Users/{ユーザー名}/detect.txt";
+    public string spellsMmapPath = "C:/Users/{ユーザー名}/spells.txt";
+    private MemoryMappedFile detectMmf;
+    private MemoryMappedViewAccessor detectAccessor;
+    private MemoryMappedFile spellsMmf;
+    private MemoryMappedViewAccessor spellsAccessor;
+    private int detectInterval = 5;
 
     void Awake()
     {
@@ -84,6 +92,39 @@ public class MemoryMapFileManager : MonoBehaviour
         {
             Debug.LogError("共有メモリファイルの読み込みに失敗: " + e.Message);
         }
+
+        //呪文検出関係
+        if (!File.Exists(spellDetectMmapPath))
+        {
+            Debug.LogError("共有メモリファイルが見つかりません: " + spellDetectMmapPath);
+            return;
+        }
+
+        try
+        {
+            detectMmf = MemoryMappedFile.CreateFromFile(spellDetectMmapPath, FileMode.Open, null);
+            detectAccessor = detectMmf.CreateViewAccessor(0, 1, MemoryMappedFileAccess.ReadWrite);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("共有メモリファイルの読み込みに失敗: " + e.Message);
+        }
+
+        if (!File.Exists(spellsMmapPath))
+        {
+            Debug.LogError("共有メモリファイルが見つかりません: " + spellsMmapPath);
+            return;
+        }
+
+        try
+        {
+            spellsMmf = MemoryMappedFile.CreateFromFile(spellsMmapPath, FileMode.Open, null);
+            spellsAccessor = spellsMmf.CreateViewAccessor(0, 2, MemoryMappedFileAccess.ReadWrite);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("共有メモリファイルの読み込みに失敗: " + e.Message);
+        }
     }
     void Start()
     {
@@ -93,10 +134,16 @@ public class MemoryMapFileManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        detectInterval--;
+        if (detectInterval == 0)
+        {
+            SpellDetect();
+            detectInterval = 5;
+        }
         //ゾルトラークデバッグ用
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            StartCoroutine(spellEffectManager.OnSpelled(SPELL.Zoltraak, GetPosition(), Quaternion.Euler(0, -45, 0)));
+            StartCoroutine(spellEffectManager.OnSpelled(SPELL.Zoltraak, GetPosition(), GetRotation()));
         }
         //レイルザイデンデバッグ用
         if (Input.GetKeyDown(KeyCode.Alpha2))
@@ -106,17 +153,17 @@ public class MemoryMapFileManager : MonoBehaviour
         //カタストラーヴィアデバッグ用
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            StartCoroutine(spellEffectManager.OnSpelled(SPELL.Catastlavia, GetPosition(), Quaternion.Euler(0, -45, 0)));
+            StartCoroutine(spellEffectManager.OnSpelled(SPELL.Catastlavia, GetPosition(), GetRotation()));
         }
         //ヴォルザンベルデバッグ用
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
-            StartCoroutine(spellEffectManager.OnSpelled(SPELL.Volzanbel, GetPosition(), Quaternion.Euler(0, -45, 0)));
+            StartCoroutine(spellEffectManager.OnSpelled(SPELL.Volzanbel, GetPosition(), GetRotation()));
         }
         //ジュドラジルムデバッグ用
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
-            StartCoroutine(spellEffectManager.OnSpelled(SPELL.Judolazirum, GetPosition(), Quaternion.Euler(0, -45, 0)));
+            StartCoroutine(spellEffectManager.OnSpelled(SPELL.Judolazirum, GetPosition(), GetRotation()));
         }
     }
 
@@ -224,6 +271,72 @@ public class MemoryMapFileManager : MonoBehaviour
         }
     }
 
+    //呪文検出関係
+    private void SpellDetect()
+    {
+        if (detectAccessor == null || spellsAccessor == null) return;
+        byte detect = 0;
+        try
+        {
+            detect = detectAccessor.ReadByte(0);
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning("共有メモリからの読み取り失敗: " + e.Message);
+        }
+        //何かしらの呪文を検知
+        if (detect == 1)
+        {
+            short spell = 0;
+            try
+            {
+                spell = spellsAccessor.ReadInt16(0);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("共有メモリからの読み取り失敗: " + e.Message);
+            }
+            //どの呪文かを選択
+            switch (spell)
+            {
+                case 1:
+                    StartCoroutine(spellEffectManager.OnSpelled(SPELL.Zoltraak, GetPosition(), GetRotation()));
+                    break;
+                case 2:
+                    StartCoroutine(spellEffectManager.OnSpelled(SPELL.Railzaiden, GetPosition(), GetRotation()));
+                    break;
+                case 3:
+                    StartCoroutine(spellEffectManager.OnSpelled(SPELL.Catastlavia, GetPosition(), GetRotation()));
+                    break;
+                case 4:
+                    StartCoroutine(spellEffectManager.OnSpelled(SPELL.Volzanbel, GetPosition(), GetRotation()));
+                    break;
+                case 5:
+                    StartCoroutine(spellEffectManager.OnSpelled(SPELL.Judolazirum, GetPosition(), GetRotation()));
+                    break;
+                default:
+                    break;
+            }
+            //mmapの値を0へ戻す
+            try
+            {
+                detectAccessor.Write(0, (byte)0);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("共有メモリへの書き込み失敗: " + e.Message);
+            }
+            try
+            {
+                spellsAccessor.Write(0, (short)0);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("共有メモリへの書き込み失敗: " + e.Message);
+            }
+        }
+    }
+
 
     void OnDisable()
     {
@@ -237,6 +350,16 @@ public class MemoryMapFileManager : MonoBehaviour
         {
             positionAccessor.Dispose();
             positionAccessor = null;
+        }
+        if (detectAccessor != null)
+        {
+            detectAccessor.Dispose();
+            detectAccessor = null;
+        }
+        if (spellsAccessor != null)
+        {
+            spellsAccessor.Dispose();
+            spellsAccessor = null;
         }
     }
 
@@ -252,6 +375,16 @@ public class MemoryMapFileManager : MonoBehaviour
         {
             positionAccessor.Dispose();
             positionAccessor = null;
+        }
+        if (detectAccessor != null)
+        {
+            detectAccessor.Dispose();
+            detectAccessor = null;
+        }
+        if (spellsAccessor != null)
+        {
+            spellsAccessor.Dispose();
+            spellsAccessor = null;
         }
     }
 }
