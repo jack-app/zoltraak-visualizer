@@ -27,7 +27,7 @@ public class MemoryMapFileManager : MonoBehaviour
     private string joyconAbsolutePath;
     private float imageWidth = 1920f;
     private float imageHeight = 1080f;
-    private float pixelToUnit = 0.01f;
+    private float pixelToUnit = 1f;
     public string positionMmapPath = "/tmp/pos_mmap.txt"; // パスは適宜変更する。
     private MemoryMappedFile positionMmf;
     private MemoryMappedViewAccessor positionAccessor;
@@ -166,6 +166,13 @@ public class MemoryMapFileManager : MonoBehaviour
         {
             StartCoroutine(spellEffectManager.OnSpelled(SPELL.Judolazirum, GetPosition(), GetRotation()));
         }
+        if (Input.GetMouseButtonDown(0)){
+            Vector3 mousePos = Input.mousePosition;
+            float zDistance = Mathf.Abs(Camera.main.transform.position.z);
+            Vector3 worldPoint = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, zDistance));
+            currentPosition = new Vector3(worldPoint.x, worldPoint.y, 0f);
+            Debug.Log("クリック位置を currentPosition に設定: " + currentPosition);
+        }
     }
 
 
@@ -211,17 +218,6 @@ public class MemoryMapFileManager : MonoBehaviour
             return currentPosition;
         }
 
-        // もしクリックされ呼ばれた場合は、そのクリック場所をcurrentPositionとして保存する
-        if (Input.GetMouseButtonDown(0))
-        {
-            Vector3 mousePos = Input.mousePosition;
-            float zDistance = Mathf.Abs(Camera.main.transform.position.z);
-            Vector3 worldPoint = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, zDistance));
-            currentPosition = new Vector3(worldPoint.x, worldPoint.y, 0f);
-            Debug.Log("クリック位置を currentPosition に設定: " + currentPosition);
-            return currentPosition;
-        }
-
         try
         {
             double[] imageCoords = new double[6];
@@ -236,9 +232,14 @@ public class MemoryMapFileManager : MonoBehaviour
             // Python 座標系 (ピクセル単位) を Unity 座標系に変換する関数
             System.Func<double, double, Vector3> toUnity = (px, py) =>
             {
-                float uX = (float)((px - (imageWidth / 2.0)) * pixelToUnit);
-                float uY = (float)(((imageHeight / 2.0) - py) * pixelToUnit);
-                return new Vector3(uX, uY, 0f);
+                double py_bl = imageHeight - py;
+                float uX = (float)(px * pixelToUnit);
+                float uY = (float)(py_bl * pixelToUnit);
+                float zDistance = Mathf.Abs(Camera.main.transform.position.z);
+                Vector3 worldPoint = Camera.main.ScreenToWorldPoint(
+                    new Vector3(uX, uY, zDistance)
+                );
+                return new Vector3(worldPoint.x, worldPoint.y, 0f);
             };
 
             for (int idx = 0; idx < 3; idx++)
