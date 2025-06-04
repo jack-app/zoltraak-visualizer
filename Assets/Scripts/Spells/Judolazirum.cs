@@ -7,6 +7,7 @@ using UnityEngine.Rendering.PostProcessing;
 public class Judolazirum : SpellEffectBase
 {
     private Transform myTransform;
+    [SerializeField] private Transform effectParent;
     [SerializeField] private PostProcessVolume postProcessVolume;
     private Bloom bloom;
     [SerializeField] private GameObject smallThunderPrefab;
@@ -184,7 +185,7 @@ public class Judolazirum : SpellEffectBase
     }
     private GameObject GenerateThunder(GameObject prefab, Vector3 pos, Vector3 rot)
     {
-        GameObject thunder = Instantiate(prefab, myTransform);
+        GameObject thunder = Instantiate(prefab, effectParent);
         thunder.transform.localPosition = pos;
         thunder.transform.localRotation = Quaternion.Euler(rot);
         return thunder;
