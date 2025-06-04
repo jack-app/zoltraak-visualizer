@@ -1,0 +1,40 @@
+using System;
+using System.Runtime.InteropServices;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
+using UnityEngine.InputSystem.Layouts;
+using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.InputSystem.Utilities;
+using UnityEngine;
+using UnityEditor;
+
+
+[StructLayout(LayoutKind.Explicit, Size = 20)]
+public struct GamepadStateSanwa : IInputStateTypeInfo
+{
+    // memo
+        // Display Name, Bit, Assign
+    // Button 2,       5, ID 1 Zoltraak
+    // Button 3,       6, ID 2 Railzaiden
+    // Button 4,       7, ID 3 Catastlavia
+    // Button 5,       0, ID 4 Volzanbel
+    // Button 6,       1, ID 5 Judolazirum
+    // Button 7: L1,   2, スクショアップロード
+    // Button 9: R1,   4, スクショ撮影
+
+    // vendor id: 0x11c0
+    // product id: 0x5044
+
+    public FourCC format => new FourCC('H','I','D');
+
+    //buttons1
+    [InputControl(name = "button2", displayName = "Button 2",bit = 5,usage = "Zoltraak")]
+    [InputControl(name = "button3", displayName = "Button 3",bit = 6,usage = "Railzaiden")]
+    [InputControl(name = "button4", displayName = "Button 4",bit = 7,usage = "Catastlavia")]
+    [FieldOffset(4)] public uint button1;
+    [InputControl(name = "button5", displayName = "Button 5",bit = 0,usage = "Volzanbel")]
+    [InputControl(name = "button6", displayName = "Button 6",bit = 1,usage = "Judolazirum")]
+    [InputControl(name = "button7", displayName = "Button 7",bit = 2,usage = "SS Upload")]
+    [InputControl(name = "button9", displayName = "Button 9",bit = 4,usage = "Take SS")]
+    [FieldOffset(5)] public uint button2;
+}
