@@ -96,7 +96,7 @@ public class ScreenShotManager : MonoBehaviour
         StartCoroutine(FlashAfterDelay());
     }
 
-    IEnumerator UploadAllScreenshotsAsync()
+    public IEnumerator UploadAllScreenshotsAsync()
     {
         if (screenshotUuids.Count == 0)
         {
