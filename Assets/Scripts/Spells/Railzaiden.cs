@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Railzaiden : SpellEffectBase
@@ -10,7 +9,7 @@ public class Railzaiden : SpellEffectBase
     [SerializeField] private RectTransform image1Rect;
     [SerializeField] private RectTransform image2Rect;
     private Animator animator;
-    private const float animationTime = 3.49f;
+    private const float animationTime = 3.5f;
 
     void Start()
     {
@@ -34,6 +33,7 @@ public class Railzaiden : SpellEffectBase
         {
             animator.SetBool("Go2", true);
         }
+        StartCoroutine(ScreenShot());
         yield return new WaitForSeconds(animationTime);
         Destroy(gameObject);
     }
@@ -42,5 +42,13 @@ public class Railzaiden : SpellEffectBase
         displaysRect.localRotation = Quaternion.Euler(0, 0, angle);
         image1Rect.localRotation = Quaternion.Euler(0, 0, -angle);
         image2Rect.localRotation = Quaternion.Euler(0, 0, -angle);
+    }
+    private IEnumerator ScreenShot()
+    {
+        if (screenShotManager != null)
+        {
+            yield return new WaitForSeconds(0.2f);
+            screenShotManager.TakeScreenshot();
+        }
     }
 }

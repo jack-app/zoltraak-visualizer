@@ -27,6 +27,7 @@ public class SpellEffectManager : MonoBehaviour
     {
         if (!isSomeSpellActive)
         {
+            Debug.Log("spell:" + spellDict[spell] + "  position:" + position + "  rotation:" + quaternion.eulerAngles);
             GameObject spellObject = Instantiate(Resources.Load<GameObject>(spellPrefabPath + spellDict[spell]), position, quaternion);
             isSomeSpellActive = true;
             yield return StartCoroutine(spellObject.GetComponent<SpellEffectBase>().Activate(position, quaternion));
