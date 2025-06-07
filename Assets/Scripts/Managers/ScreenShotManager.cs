@@ -82,7 +82,7 @@ public class ScreenShotManager : MonoBehaviour
         screenshotUuids.Add(uuid);
     }
 
-    void TakeScreenshot()
+    public void TakeScreenshot()
     {
         StartCoroutine(CaptureAndRegister());
     }

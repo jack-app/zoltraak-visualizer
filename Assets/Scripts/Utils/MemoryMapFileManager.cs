@@ -24,7 +24,7 @@ public class MemoryMapFileManager : MonoBehaviour
     private MemoryMappedFile mmf;
     private MemoryMappedViewAccessor accessor;
     private string joyconAbsolutePath;
-    private float imageWidth = 1920f;
+    //private float imageWidth = 1920f;
     private float imageHeight = 1080f;
     private float pixelToUnit = 1f;
     public string positionMmapPath = "/tmp/pos_mmap.txt"; // パスは適宜変更する。
@@ -32,6 +32,7 @@ public class MemoryMapFileManager : MonoBehaviour
     private MemoryMappedViewAccessor positionAccessor;
     private Vector3 currentPosition = Vector3.zero;
 
+    private float getPosIntervalSecond = 1; //検出位置更新間隔(秒単位)
     //呪文検出関係
     public string spellDetectMmapPath = "/tmp/is_spell_detected";
     public string spellsMmapPath = "/tmp/spell_id";
@@ -39,7 +40,9 @@ public class MemoryMapFileManager : MonoBehaviour
     private MemoryMappedViewAccessor detectAccessor;
     private MemoryMappedFile spellsMmf;
     private MemoryMappedViewAccessor spellsAccessor;
-    private int detectInterval = 5;
+    private int detectIntervalFrame = 5;    //音声認識チェック間隔(フレーム単位)
+
+    [SerializeField] private GameObject debugFrame;  //デバッグ用 認識位置に緑フレーム表示
 
     void Awake()
     {
@@ -128,17 +131,27 @@ public class MemoryMapFileManager : MonoBehaviour
     }
     void Start()
     {
-        StartCoroutine(PollPositionCoroutine());
+        //StartCoroutine(PollPositionCoroutine());
+        debugFrame.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
-        detectInterval--;
-        if (detectInterval == 0)
+        //現状、1秒に1回杖の検出位置を更新
+        getPosIntervalSecond -= Time.deltaTime;
+        if (getPosIntervalSecond <= 0)
+        {
+            Vector3 pos = GetPosition();
+            debugFrame.transform.position = pos;
+            getPosIntervalSecond = 1;
+        }
+        //現状、5フレームに1回呪文検出mmapをチェック
+        detectIntervalFrame--;
+        if (detectIntervalFrame == 0)
         {
             SpellDetect();
-            detectInterval = 5;
+            detectIntervalFrame = 5;
         }
         //ゾルトラークデバッグ用
         if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -172,6 +185,7 @@ public class MemoryMapFileManager : MonoBehaviour
             Vector3 worldPoint = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, zDistance));
             currentPosition = new Vector3(worldPoint.x, worldPoint.y, 0f);
             Debug.Log("クリック位置を currentPosition に設定: " + currentPosition);
+            debugFrame.transform.position = currentPosition;
         }
     }
 
@@ -201,15 +215,15 @@ public class MemoryMapFileManager : MonoBehaviour
         Quaternion targetRotation = new Quaternion(xDeg, yDeg, zDeg, wDeg);
         return targetRotation;
     }
-    private IEnumerator PollPositionCoroutine()
-    {
-        while (true)
-        {
-            Vector3 pos = GetPosition();
-            // 5秒ごとに実行
-            yield return new WaitForSeconds(1f);
-        }
-    }
+    //private IEnumerator PollPositionCoroutine()
+    //{
+    //    while (true)
+    //    {
+    //        Vector3 pos = GetPosition();
+    //        // 5秒ごとに実行
+    //        yield return new WaitForSeconds(1f);
+    //    }
+    //}
     private Vector3 GetPosition()
     {
         if (positionAccessor == null)

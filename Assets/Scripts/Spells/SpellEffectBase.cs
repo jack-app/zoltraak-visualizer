@@ -1,19 +1,20 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class SpellEffectBase : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    protected ScreenShotManager screenShotManager;
+    private void Awake()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        try
+        {
+            screenShotManager = GameObject.Find("ScreenShotManager").GetComponent<ScreenShotManager>();
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("There is no ScreenShotManager: " + e.Message);
+        }
     }
     public abstract IEnumerator Activate(Vector3 position, Quaternion quaternion);
 }

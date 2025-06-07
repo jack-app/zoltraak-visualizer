@@ -59,7 +59,7 @@ public class Volzanbel : SpellEffectBase
         //直前の発光
         StartCoroutine(Flash2());
         GameObject flash = Instantiate(flashPrefab, effectParent);
-        flash.transform.position = new(1, -1, 0);
+        flash.transform.localPosition = new(0, -1, 0);
         flash.transform.rotation = Quaternion.identity;
         flash.transform.localScale = new(2, 1, 1);
         StartCoroutine(ManagePrefab(flash, 0.5f));
@@ -74,6 +74,10 @@ public class Volzanbel : SpellEffectBase
         yield return new WaitForSeconds(3);
         //フィニッシュ
         StartCoroutine(Flash3());
+        if (screenShotManager != null)
+        {
+            screenShotManager.TakeScreenshot();
+        }
         yield return new WaitForSeconds(1);
         Destroy(red);
         yield return new WaitForSeconds(3);
