@@ -125,7 +125,12 @@ public class Judolazirum : SpellEffectBase
         GameObject t1 = GenerateThunder(additionalThunderPrefab, new(20, 0, -50), new(0, -90, 0));
         yield return new WaitForSeconds(0.8f);
         GameObject t2 = GenerateThunder(additionalThunderPrefab, new(20, 50, 0), new(0, 0, -90));
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(0.4f);
+        if (screenShotManager != null)
+        {
+            screenShotManager.TakeScreenshot();
+        }
+        yield return new WaitForSeconds(0.4f);
         GameObject t3 = GenerateThunder(additionalThunderPrefab, new(0, 40, 0), new(0, 0, -45));
         yield return new WaitForSeconds(1);
         Destroy(t1); Destroy(t2); Destroy(t3);

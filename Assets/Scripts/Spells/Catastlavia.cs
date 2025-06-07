@@ -53,7 +53,7 @@ public class Catastlavia : SpellEffectBase
             GameObject arrow = Instantiate(laviaPrefab, effectParent);
             arrow.transform.localPosition = pos[i];
             arrow.transform.localRotation = Quaternion.Euler(new(angleX * Mathf.Rad2Deg, 0, 0));
-            StartCoroutine(ArrowManage(arrow, 2.99f));
+            StartCoroutine(ArrowManage(arrow, 3f));
             yield return new WaitForSeconds(0.1f);
         }
         particle1.SetActive(true);
@@ -71,7 +71,7 @@ public class Catastlavia : SpellEffectBase
             GameObject arrow = Instantiate(laviaPrefab2, effectParent);
             arrow.transform.localPosition = new(x, y, z);
             arrow.transform.localRotation = Quaternion.Euler(new(angleX * Mathf.Rad2Deg, 0, 0));
-            StartCoroutine(ArrowManage(arrow, 0.49f));
+            StartCoroutine(ArrowManage(arrow, 0.5f));
             if (i % 2 == 0)
             {
                 float y2 = UnityEngine.Random.Range(minY, maxY);
@@ -80,11 +80,15 @@ public class Catastlavia : SpellEffectBase
                 GameObject arrow2 = Instantiate(laviaPrefab2, effectParent);
                 arrow2.transform.localPosition = new(x, y2, z2);
                 arrow2.transform.localRotation = Quaternion.Euler(new(angleX2 * Mathf.Rad2Deg, 0, 0));
-                StartCoroutine(ArrowManage(arrow2, 0.49f));
+                StartCoroutine(ArrowManage(arrow2, 0.5f));
             }
             if (i == 19)
             {
                 StartCoroutine(Flash3());
+                if (screenShotManager != null)
+                {
+                    screenShotManager.TakeScreenshot();
+                }
             }
             yield return new WaitForSeconds(0.1f);
         }
