@@ -103,7 +103,7 @@ public class ScreenShotManager : MonoBehaviour
             Debug.LogWarning("No screenshots to upload.");
             yield break;
         }
-        string userId = Guid.NewGuid().ToString();
+        string userId = DateTime.Now.ToString("yyyy-MM-dd-HHmmssfff");
         Debug.Log("Uploading screenshots for user: " + userId);
         foreach (string uuid in screenshotUuids)
         {
