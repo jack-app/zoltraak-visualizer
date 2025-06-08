@@ -161,7 +161,7 @@ public class MemoryMapFileManager : MonoBehaviour
         //レイルザイデンデバッグ用
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            StartCoroutine(spellEffectManager.OnSpelled(SPELL.Railzaiden, new (0, 0, 0), Quaternion.identity));
+            StartCoroutine(spellEffectManager.OnSpelled(SPELL.Railzaiden, new(0, 0, 0), Quaternion.identity));
         }
         //カタストラーヴィアデバッグ用
         if (Input.GetKeyDown(KeyCode.Alpha3))
@@ -192,7 +192,7 @@ public class MemoryMapFileManager : MonoBehaviour
 
     private Quaternion GetRotation()
     {
-        if (isDebug) return Quaternion.identity;
+        if (isDebug) return Quaternion.Euler(0, 45, 0);
         if (accessor == null) return Quaternion.identity;
 
         try
@@ -277,7 +277,7 @@ public class MemoryMapFileManager : MonoBehaviour
                 currentPosition = bestCandidate;
             }
 
-            Debug.Log("座標系: " + currentPosition);
+            // Debug.Log("座標系: " + currentPosition);
             return currentPosition;
         }
         catch (Exception e)

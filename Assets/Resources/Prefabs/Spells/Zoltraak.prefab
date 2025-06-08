@@ -75,12 +75,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   postProcessVolume: {fileID: 7958338398043176395}
   defaultIntensity: 10
-  circleIntensity: 30
-  beamIntensity: 15
+  circleIntensity: 25
+  beamIntensity: 11
   finishIntensity: 25
   defaultThreshold: 0.9
   circleThreshold: 0.2
-  beamThreshold: 0.7
+  beamThreshold: 0.8
   finishThreshold: 0.3
 --- !u!1 &1313973250635264489
 GameObject:
